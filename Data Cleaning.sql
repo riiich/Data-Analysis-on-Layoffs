@@ -214,12 +214,27 @@ WHERE t1.company = t2.company
 	  AND t2.industry IS NOT NULL;
 
 
+-- Check to see if there are any rows where the total_laid_off and percentage_laid_off are both null b/c that's the most important columns for this analysis
+SELECT *
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL AND percentage_laid_off IS NULL;
 
 
+-- There are a lot of rows where total_laid_off and percentage_laid_off are both null, so we can remove these rows since it's irrelevant for the analysis
+DELETE 
+FROM layoffs_staging2
+WHERE total_laid_off IS NULL AND percentage_laid_off IS NULL;
 
 
+-- At this point, we don't need row_num anymore since we removed all the duplicates
+ALTER TABLE layoffs_staging2
+DROP COLUMN row_num;
 
 
+SELECT *
+FROM layoffs_staging2;
 
+
+-- Now the data is all clean!
 
 
