@@ -1,3 +1,5 @@
+/** DATA CLEANING **/
+
 -- Have to create table with the column names in the csv file
 CREATE TABLE layoffs (
 	company TEXT,
@@ -34,7 +36,7 @@ ALTER COLUMN funds_raised_millions TYPE FLOAT;
 		1. Remove duplicates
 		2. Standardize the data
 		3. Null values or blank values
-		4. Remove any columns
+		4. Remove any columns or rows
 **/
 
 SELECT *
@@ -145,7 +147,7 @@ SELECT DISTINCT funds_raised_millions FROM layoffs_staging2 ORDER BY 1;
 /*
 	Some bad data in each column:
 		- There are 2 'United States' in country (1 of it has a '.' at the end) 	(done; removed the '.' from countries that start with 'United States')
-		- some have null/blank values
+		- some have null/blank values		(done)
 		- total_laid_off is a text data type	(done; changed it to INT type)
 		- date column is text	(done; changed it to DATE type)
 */
