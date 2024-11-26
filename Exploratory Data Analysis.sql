@@ -41,19 +41,35 @@ ORDER BY total_laid_off DESC;
 /* 
 	All the 
 */
-SELECT industry, SUM(total_laid_off) sum_laid_off
+SELECT industry, SUM(total_laid_off)
 FROM layoffs_staging2
-GROUP BY company
-ORDER BY sum_laid_off DESC;
+GROUP BY industry
+ORDER BY 2 DESC;
 
 
+/*
+	Sum of layoffs throughout the months and years
+*/
+SELECT SUBSTRING(date::TEXT FROM 1 FOR 7) AS month_year, SUM(total_laid_off)
+FROM layoffs_staging2
+WHERE SUBSTRING(date::TEXT FROM 1 FOR 7) IS NOT NULL
+GROUP BY month_year
+ORDER BY 1 ASC;
 
 
-
-
-
-
-
+/*
+	Utilizing a CTE to find the rolling sum of layoffs
+*/
+WITH Rolling_Sum AS
+(
+	SELECT SUBSTRING(date::TEXT FROM 1 FOR 7) AS month_year, SUM(total_laid_off) AS years_layoffs
+	FROM layoffs_staging2
+	WHERE SUBSTRING(date::TEXT FROM 1 FOR 7) IS NOT NULL
+	GROUP BY month_year
+	ORDER BY 1 ASC
+)
+SELECT month_year, SUM(years_layoffs) 
+FROM Rolling_Sum;
 
 
 
