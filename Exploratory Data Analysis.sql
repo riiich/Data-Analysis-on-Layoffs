@@ -84,7 +84,15 @@ ORDER BY 3 DESC;
 
 
 /*
-	Ranking the amount of layoffs based on the number of total layoffs in each year and the top 5 in each year
+	Ranking the amount of layoffs based on the number of total layoffs in each year and the top 5 layoffs in each year.
+
+	Findings: 
+		- In 2020, Uber had the most amount of layoffs laying off 7525 employees.
+		- In 2021, Bytedance had the most amount of layoffs 3600 employees.
+		- In 2022, Meta had the most amount of layoffs .
+		- In 2023 (up until March), Google had the most amount of layoffs.
+
+		
 */
 WITH Company_Year (company, years, total_laid_off) AS
 (
@@ -92,18 +100,16 @@ WITH Company_Year (company, years, total_laid_off) AS
 	FROM layoffs_staging2
 	GROUP BY company, SUBSTRING(date::TEXT FROM 1 FOR 4)
 	HAVING SUM(total_laid_off) IS NOT NULL
-	ORDER BY 3 DESC
-),
+), 
 Company_Year_Rankings AS
 (
 	SELECT *,
-	DENSE_RANK() OVER (PARTITION BY years ORDER BY total_laid_off) AS Ranking
-	FROM layoffs_staging2
+	DENSE_RANK() OVER (PARTITION BY years ORDER BY total_laid_off DESC) AS Ranking
+	FROM Company_Year
 )
-SELECT *, 
-DENSE_RANK() OVER(PARTITION BY years ORDER BY total_laid_off) AS layoff_ranking
-FROM Company_Year
-WHERE years IS NOT NULL;
+SELECT *
+FROM Company_Year_Rankings
+WHERE years IS NOT NULL AND ranking <= 5;
 
 
 
